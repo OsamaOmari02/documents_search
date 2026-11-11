@@ -8,7 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Tokenizer tokenizer = new Tokenizer(AppConstants.STOP_WORDS);
+        Tokenizer tokenizer = new Tokenizer();
         DocumentProcessor processor = new DocumentProcessor(tokenizer);
         try (var files = Files.list(Path.of(AppConstants.DOCUMENTS_DIR))) {
             for (Path p : files.filter(f -> f.toString().endsWith(".txt")).sorted().toList()) {
