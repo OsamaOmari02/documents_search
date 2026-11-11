@@ -1,0 +1,3 @@
+Java is a powerful programming language. It is used for web servers,
+mobile apps, and large enterprise systems. Many developers learn Java
+because it is stable and widely supported.
