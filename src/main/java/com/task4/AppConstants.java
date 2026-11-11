@@ -14,5 +14,6 @@ public class AppConstants {
             "about", "because", "every", "all", "any", "some", "such", "also", "dont"
     );
     public static final String DOCUMENTS_DIR = "documents";
+    public static final String DATA_DIR = "data";
 
 }
