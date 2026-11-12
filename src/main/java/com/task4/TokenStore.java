@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class TokenStore {
 
     private static final String HEADER = "TOKENS-V1";
     private static final String END = "END";
+    private static final String SUFFIX = ".tokens";
 
     public void save(String documentName, List<String> tokens) throws IOException {
         Files.createDirectories(Path.of(AppConstants.DATA_DIR));
@@ -73,7 +75,20 @@ public class TokenStore {
         }
     }
 
+    public List<String> listDocuments() throws IOException {
+        try (var files = Files.list(Path.of(AppConstants.DATA_DIR))) {
+            return files
+                    .map(p -> p.getFileName().toString())
+                    .filter(n -> n.endsWith(SUFFIX))
+                    .map(n -> n.substring(0, n.length() - SUFFIX.length()))
+                    .sorted()
+                    .toList();
+        } catch (NoSuchFileException e) {
+            return List.of();
+        }
+    }
+
     private Path pathFor(String documentName) {
-        return Path.of(AppConstants.DATA_DIR, documentName + ".tokens");
+        return Path.of(AppConstants.DATA_DIR, documentName + SUFFIX);
     }
 }

@@ -1,9 +1,8 @@
 package com.task4;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,7 +28,7 @@ public class SearchService {
         }
         List<SearchResult> results = new ArrayList<>();
 
-        for (String document : listDocuments()) {
+        for (String document : tokenStore.listDocuments()) {
             List<String> tokens;
             try {
                 tokens = tokenStore.load(document);
@@ -51,25 +50,18 @@ public class SearchService {
                 }
             }
             if (matched > 0) {
-                results.add(new SearchResult(document, matched, occurrences));
+                double score = score(matched, occurrences);
+                results.add(new SearchResult(document, matched, occurrences, score));
             }
 
         }
+        results.sort(Comparator.comparingDouble(SearchResult::score).reversed().thenComparing(Comparator.comparingInt(SearchResult::matchedWords).reversed())
+                .thenComparing(SearchResult::document));
         return results;
 
     }
 
-    private List<String> listDocuments() {
-        try (var files = Files.list(Path.of(AppConstants.DATA_DIR))) {
-            return files
-                    .map(p -> p.getFileName().toString())
-                    .filter(n -> n.endsWith(SUFFIX))
-                    .map(n -> n.substring(0, n.length() - SUFFIX.length()))
-                    .sorted()
-                    .toList();
-
-        } catch (IOException e) {
-            return List.of();
-        }
+    private double score(int matchedWords, int occurrences) {
+        return matchedWords * 100.0 + 50.0 * occurrences / (occurrences + 5.0);
     }
 }

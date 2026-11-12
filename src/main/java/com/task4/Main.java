@@ -2,7 +2,10 @@ package com.task4;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.NoSuchFileException;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
@@ -12,6 +15,7 @@ public class Main {
         Tokenizer tokenizer = new Tokenizer();
         DocumentProcessor processor = new DocumentProcessor(tokenizer);
         TokenStore tokenStore = new TokenStore();
+        StatsService statsService = new StatsService(tokenStore);
 
         // List<Path> txtFiles;
         // try (var files = Files.list(Path.of(AppConstants.DOCUMENTS_DIR))) {
@@ -63,11 +67,48 @@ public class Main {
                     }
                     for (SearchResult r : results) {
                         System.out.println(r.document());
+
                         System.out.println("  Matched words: " + r.matchedWords());
                         System.out.println("  Occurrences: " + r.occurrences());
+                        System.out.println("  Score: " + String.format(Locale.ROOT, "%.1f", r.score()));
                     }
                 } catch (IOException e) {
                     System.err.println("Search failed: " + e.getMessage());
+                }
+            } else if (line.equals("list")) {
+                try {
+                    List<String> documents = tokenStore.listDocuments();
+                    if (documents.isEmpty()) {
+                        System.out.println("No processed documents.");
+                    }
+                    for (String document : documents) {
+                        System.out.println(document);
+                    }
+                } catch (IOException e) {
+                    System.err.println("Could not list documents: " + e.getMessage());
+                }
+            } else if (line.startsWith("stats ")) {
+                String name = line.substring("stats ".length()).trim();
+                if (!name.endsWith(".txt")) {
+                    name = name + ".txt";
+                }
+                try {
+                    DocumentStats s = statsService.stats(name);
+                    System.out.println(name);
+                    System.out.println("  Total tokens: " + s.totalTokens());
+                    System.out.println("  Unique tokens: " + s.uniqueTokens());
+                    if (s.topWords().isEmpty()) {
+                        System.out.println("  No words found.");
+                    } else {
+                        System.out.println("  Most frequent words:");
+                        for (Map.Entry<String, Integer> e : s.topWords()) {
+                            System.out.println("    " + e.getKey() + " - " + e.getValue());
+                        }
+                    }
+                } catch (NoSuchFileException e) {
+                    System.out.println("Document not found: " + name);
+                } catch (IOException e) {
+                    System.err.println("Stats failed: " + e.getMessage());
                 }
             } else {
                 System.out.println("Unknown command. Try: search <words>, exit");
