@@ -9,12 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 
-import com.task4.cli.Command.Exit;
-import com.task4.cli.Command.Help;
-import com.task4.cli.Command.Invalid;
-import com.task4.cli.Command.ListDocuments;
-import com.task4.cli.Command.Search;
-import com.task4.cli.Command.Stats;
 import com.task4.indexing.IndexReport;
 import com.task4.indexing.Indexer;
 import com.task4.search.DocumentStats;
@@ -41,24 +35,26 @@ public class Cli {
     }
 
     public void run() {
-        Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
-        printHelp();
+        try (Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
 
-        while (true) {
-            System.out.print("> ");
-            if (!scanner.hasNextLine()) {
-                break;
-            }
-            String line = scanner.nextLine().trim();
-            if (line.isEmpty()) {
-                continue;
-            }
+            printHelp();
 
-            Command command = commandParser.parse(line);
-            if (command instanceof Command.Exit) {
-                break;
+            while (true) {
+                System.out.print("> ");
+                if (!scanner.hasNextLine()) {
+                    break;
+                }
+                String line = scanner.nextLine().trim();
+                if (line.isEmpty()) {
+                    continue;
+                }
+
+                Command command = commandParser.parse(line);
+                if (command instanceof Command.Exit) {
+                    break;
+                }
+                execute(command);
             }
-            execute(command);
         }
     }
 
