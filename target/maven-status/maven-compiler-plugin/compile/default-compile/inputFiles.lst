@@ -1,3 +1,13 @@
-C:\Users\osama\OneDrive\Desktop\Tasks\Task4\documents_search\src\main\java\com\task4\DocumentProcessor.java
-C:\Users\osama\OneDrive\Desktop\Tasks\Task4\documents_search\src\main\java\com\task4\Main.java
-C:\Users\osama\OneDrive\Desktop\Tasks\Task4\documents_search\src\main\java\com\task4\Tokenizer.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/Main.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/cli/Cli.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/cli/Command.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/cli/CommandParser.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/config/AppConstants.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/indexing/DocumentProcessor.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/search/DocumentStats.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/search/SearchResult.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/search/SearchService.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/search/StatsService.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/storage/CorruptDataException.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/storage/TokenStore.java
+/Users/my/Desktop/projects/Task5/documents_search/src/main/java/com/task4/text/Tokenizer.java

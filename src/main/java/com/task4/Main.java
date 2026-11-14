@@ -1,119 +1,29 @@
 package com.task4;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.NoSuchFileException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Scanner;
+
+import com.task4.cli.Cli;
+import com.task4.cli.CommandParser;
+import com.task4.indexing.DocumentProcessor;
+import com.task4.indexing.FileHasher;
+import com.task4.indexing.Indexer;
+import com.task4.search.SearchService;
+import com.task4.search.StatsService;
+import com.task4.storage.ManifestStore;
+import com.task4.storage.TokenStore;
+import com.task4.text.Tokenizer;
 
 public class Main {
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws IOException {
         Tokenizer tokenizer = new Tokenizer();
-        DocumentProcessor processor = new DocumentProcessor(tokenizer);
         TokenStore tokenStore = new TokenStore();
+        DocumentProcessor processor = new DocumentProcessor(tokenizer);
+        Indexer indexer = new Indexer(processor, tokenStore, new ManifestStore(), new FileHasher());
+        SearchService searchService = new SearchService(tokenizer, tokenStore);
         StatsService statsService = new StatsService(tokenStore);
 
-        // List<Path> txtFiles;
-        // try (var files = Files.list(Path.of(AppConstants.DOCUMENTS_DIR))) {
-        //     txtFiles = files
-        //             .filter(f -> f.toString().endsWith(".txt"))
-        //             .sorted()
-        //             .toList();
-        // } catch (IOException e) {
-        //     System.err.println("Could not read documents folder: " + e.getMessage());
-        //     return;
-        // }
-        // if (txtFiles.isEmpty()) {
-        //     System.out.println("No .txt files found in '" + AppConstants.DOCUMENTS_DIR + "'.");
-        //     return;
-        // }
-        // for (Path path : txtFiles) {
-        //     String name = path.getFileName().toString();
-        //     try {
-        //         List<String> tokens = processor.process(path);
-        //         tokenStore.save(name, tokens);
-        //         List<String> loaded = tokenStore.load(name);
-        //         boolean IsSame = loaded.equals(tokens);
-        //         System.out.println(name + " -> " + tokens.size() + " tokens, saved and reloaded, equal: " + IsSame);
-        //     } catch (CorruptDataException e) {
-        //         System.err.println(name + " -> corrupt saved data: " + e.getMessage());
-        //     } catch (IOException e) {
-        //         System.err.println(name + " -> failed: " + e.getMessage());
-        //     }
-        // }
-        SearchService searchService = new SearchService(tokenizer, tokenStore);
-        Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
-
-        while (true) {
-            System.out.print("> ");
-            if (!scanner.hasNextLine()) {
-                break;
-            }
-            String line = scanner.nextLine().trim();
-            if (line.equals("exit")) {
-                break;
-            }
-
-            if (line.startsWith("search ")) {
-                String query = line.substring("search ".length());
-                try {
-                    List<SearchResult> results = searchService.search(query);
-                    if (results.isEmpty()) {
-                        System.out.println("No documents found.");
-                    }
-                    for (SearchResult r : results) {
-                        System.out.println(r.document());
-
-                        System.out.println("  Matched words: " + r.matchedWords());
-                        System.out.println("  Occurrences: " + r.occurrences());
-                        System.out.println("  Score: " + String.format(Locale.ROOT, "%.1f", r.score()));
-                    }
-                } catch (IOException e) {
-                    System.err.println("Search failed: " + e.getMessage());
-                }
-            } else if (line.equals("list")) {
-                try {
-                    List<String> documents = tokenStore.listDocuments();
-                    if (documents.isEmpty()) {
-                        System.out.println("No processed documents.");
-                    }
-                    for (String document : documents) {
-                        System.out.println(document);
-                    }
-                } catch (IOException e) {
-                    System.err.println("Could not list documents: " + e.getMessage());
-                }
-            } else if (line.startsWith("stats ")) {
-                String name = line.substring("stats ".length()).trim();
-                if (!name.endsWith(".txt")) {
-                    name = name + ".txt";
-                }
-                try {
-                    DocumentStats s = statsService.stats(name);
-                    System.out.println(name);
-                    System.out.println("  Total tokens: " + s.totalTokens());
-                    System.out.println("  Unique tokens: " + s.uniqueTokens());
-                    if (s.topWords().isEmpty()) {
-                        System.out.println("  No words found.");
-                    } else {
-                        System.out.println("  Most frequent words:");
-                        for (Map.Entry<String, Integer> e : s.topWords()) {
-                            System.out.println("    " + e.getKey() + " - " + e.getValue());
-                        }
-                    }
-                } catch (NoSuchFileException e) {
-                    System.out.println("Document not found: " + name);
-                } catch (IOException e) {
-                    System.err.println("Stats failed: " + e.getMessage());
-                }
-            } else {
-                System.out.println("Unknown command. Try: search <words>, exit");
-            }
-        }
+        new Cli(indexer, new CommandParser(), searchService, statsService, tokenStore).run();
 
     }
 }

@@ -1,4 +1,4 @@
-package com.task4;
+package com.task4.storage;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.task4;
+package com.task4.config;
 
 import java.util.Set;
 
@@ -11,8 +11,7 @@ public class AppConstants {
             "we", "they", "me", "him", "her", "us", "them", "my", "your", "our", "their",
             "not", "no", "so", "than", "very", "can", "will", "just",
             "have", "has", "had", "do", "does", "did", "over", "up", "out", "into",
-            "about", "because", "every", "all", "any", "some", "such", "also", "dont"
-    );
+            "about", "because", "every", "all", "any", "some", "such", "also", "dont");
     public static final String DOCUMENTS_DIR = "documents";
     public static final String DATA_DIR = "data";
 

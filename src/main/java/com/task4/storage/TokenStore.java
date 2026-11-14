@@ -1,4 +1,4 @@
-package com.task4;
+package com.task4.storage;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.task4.config.AppConstants;
 
 public class TokenStore {
 
@@ -86,6 +88,14 @@ public class TokenStore {
         } catch (NoSuchFileException e) {
             return List.of();
         }
+    }
+
+    public boolean exists(String documentName) {
+        return Files.exists(pathFor(documentName));
+    }
+
+    public void delete(String documentName) throws IOException {
+        Files.deleteIfExists(pathFor(documentName));
     }
 
     private Path pathFor(String documentName) {

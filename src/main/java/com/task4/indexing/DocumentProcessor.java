@@ -1,4 +1,4 @@
-package com.task4;
+package com.task4.indexing;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.task4.text.Tokenizer;
 
 public class DocumentProcessor {
 

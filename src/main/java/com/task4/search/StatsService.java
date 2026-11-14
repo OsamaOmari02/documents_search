@@ -1,9 +1,11 @@
-package com.task4;
+package com.task4.search;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.task4.storage.TokenStore;
 
 public class StatsService {
 
